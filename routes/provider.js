@@ -76,7 +76,7 @@ router.post('/register', async (req, res) => {
       createdAt: new Date(),
     });
 
-    const verificationLink = `http://localhost:4000/provider/verify/${verificationToken}`;
+    const verificationLink = `https://sociosphere-qwwg.onrender.com/provider/verify/${verificationToken}`;
     console.log('Verification Link:', verificationLink);
 
     const transporter = nodemailer.createTransport({

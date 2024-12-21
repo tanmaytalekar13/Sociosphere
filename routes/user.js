@@ -58,7 +58,7 @@ router.post('/register', async (req, res) => {
       isVerified: false,
     };
 
-    const verificationLink = `http://localhost:4000/verify/${verificationToken}`;
+    const verificationLink = `https://sociosphere-qwwg.onrender.com/verify/${verificationToken}`;
     console.log('Verification Link:', verificationLink);
 
     const transporter = nodemailer.createTransport({
@@ -554,7 +554,7 @@ router.post("/book/instant/:providerid/:userId", authenticateJWT, async (req, re
     const bookingDetails = `Booking ID: ${booking._id}, Provider: ${provider.name}, Date: ${currentDateTime.toDateString()}, Time: ${currentDateTime.toTimeString()}`;
 
     // Call SMS endpoint
-    await axios.post('http://localhost:4000/booking/book-success', {
+    await axios.post('https://sociosphere-qwwg.onrender.com/booking/book-success', {
       phoneNumber: '91'+userContact,
       bookingDetails: bookingDetails
     })
@@ -622,7 +622,7 @@ router.post("/book/schedule/:providerid/:userId", authenticateJWT, async (req, r
     const bookingDetails = `Booking ID: ${bookingRequest._id}, Provider: ${provider.name}, Date: ${bookingDate.toDateString()}}`;
 
     // Call SMS endpoint
-    await axios.post('http://localhost:4000/booking/book-success', {
+    await axios.post('https://sociosphere-qwwg.onrender.com/booking/book-success', {
       phoneNumber: '91'+userContact,
       bookingDetails: bookingDetails
     })
