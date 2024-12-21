@@ -73,7 +73,7 @@ app.use('/api/payment', paymentRoutes);
 app.use('/booking', bookingRoutes);
 
 
-cron.schedule('* * * * *', async () => {
+cron.schedule('0 0 * * *', async () => {
   console.log('Running moveBookings job...');
   await moveBookings();
 });
