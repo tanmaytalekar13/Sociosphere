@@ -1,0 +1,75 @@
+<%- include('./partials/header'); %>
+
+<body class="bg-white font-sans leading-relaxed tracking-wide">
+    <div class="flex items-center justify-center min-h-screen px-4 sm:px-6 lg:px-8">
+        <div class="bg-white shadow-lg rounded-lg p-6 w-full max-w-md">
+            <!-- Logo and Company Name -->
+            <div class="text-center">
+                <img src="https://img.freepik.com/premium-vector/black-handyman-character-holding-multiple-tools-electrician-plumber-carpenter-painter-repairman_375605-487.jpg" 
+                     alt="Handyman" class="mx-auto w-24 h-auto mb-4 rounded-lg">
+                <h1 class="text-3xl font-bold text-[#252956] font-poppins">
+                    <span>Socio</span><span class="text-yellow-500">sphere</span>
+                </h1>
+                <p class="mt-2 text-sm text-[#252956]">"Manage Services. Monitor Providers. Ensure Quality."</p>
+            </div>
+
+            <!-- Login Form -->
+            <form class="mt-6 space-y-4" action="/login" method="POST">
+                <div>
+                    <label for="email" class="block text-sm font-medium text-[#252956]">Email address</label>
+                    <input id="email" name="email" type="email" required
+                        class="appearance-none rounded-md w-full px-4 py-2 border border-gray-300 text-[#252956] focus:outline-none focus:ring-2 focus:ring-[#252956] focus:border-[#252956] sm:text-sm"
+                        placeholder="Enter your email">
+                </div>
+                <div>
+                    <label for="password" class="block text-sm font-medium text-[#252956]">Password</label>
+                    <input id="password" name="password" type="password" required
+                        class="appearance-none rounded-md w-full px-4 py-2 border border-gray-300 text-[#252956] focus:outline-none focus:ring-2 focus:ring-[#252956] focus:border-[#252956] sm:text-sm"
+                        placeholder="Enter your password">
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <a href="#" class="text-xs font-medium text-[#252956] hover:text-[#1a1f34]">Forgot your password?</a>
+                </div>
+
+                <button type="submit"
+                    class="group relative w-full flex justify-center py-2 px-4 text-sm font-medium rounded-md text-white bg-[#252956] hover:bg-[#1a1f34] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#252956] shadow-md transition-transform transform hover:scale-105">
+                    Sign In
+                </button>
+            </form>
+
+            <!-- Google Login -->
+            <button
+                onclick="window.location.href='/auth/google'"
+                class="mt-4 w-full flex items-center justify-center gap-2 bg-[#252956] text-white py-2 rounded-md hover:bg-[#1a1f34] transition-transform transform hover:scale-105 shadow-md"
+                aria-label="Sign in with Google">
+                <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" alt="Google" class="w-4">
+                Sign in with Google
+            </button>
+
+            <!-- Register Redirect -->
+            <p class="mt-4 text-center text-xs text-gray-500">
+                Don't have an account?
+                <a href="/register" class="text-blue-500 hover:underline">Register</a>
+            </p>
+
+            <!-- Admin and Provider Links -->
+            <div class="mt-4 text-center text-xs text-gray-500">
+                <p>
+                    <a href="/admin/login" class="text-blue-500 hover:underline">Admin Login</a> | 
+                    <a href="/provider/" class="text-blue-500 hover:underline">Provider Login</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        if (window.history && window.history.pushState) {
+            window.history.pushState(null, null, window.location.href);
+            window.onpopstate = function () {
+                window.location.href = '/login';
+            };
+        }
+    </script>
+</body>
+</html>

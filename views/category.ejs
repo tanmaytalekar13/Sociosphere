@@ -1,0 +1,76 @@
+<%- include('./partials/header'); %>
+<body>
+    <%- include('./partials/nav'); %>
+     <!-- Categories Section -->
+     <div class="mt-24 p-6 h-screen max-h-auto">
+        <h2 class="text-3xl font-semibold text-center mb-8">Explore Categories</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6" id="categories-grid">
+          <% categories.forEach((category, index) => { %>
+          <div
+            class="category-item bg-white rounded-lg shadow-lg p-4 cursor-pointer hover:scale-105 transform transition-all"
+            onclick="window.location.href='/category/<%= category._id %>'" 
+            id="category-card-<%= index %>"
+          >
+            <div class="aspect-w-16 aspect-h-9">
+              <img src="<%= category.image %>" alt="<%= category.name %>" class="w-full h-full object-cover rounded-lg" />
+            </div>
+            <h3 class="text-xl font-semibold text-gray-800 mt-4"><%= category.name %></h3>
+            <p class="text-sm text-gray-600 mt-2">
+              <span class="short-desc-<%= index %>">
+                <%= category.description.substring(0, 70) %> <% if (category.description.length > 70) { %> ...
+                <a href="javascript:void(0);" class="text-blue-600 underline" onclick="toggleDescription(<%= index %>)">Read more</a>
+                <% } %>
+              </span>
+              <span class="full-desc-<%= index %> hidden">
+                <%= category.description %>
+                <a href="javascript:void(0);" class="text-blue-600 underline" onclick="toggleDescription(<%= index %>)">Show less</a>
+              </span>
+            </p>
+          </div>
+          <% }) %>
+        </div>
+        <div id="no-results" class="hidden text-center text-red-600 mt-6">No categories found.</div>
+      </div>
+  
+      <script>
+          
+        function toggleDescription(index) {
+          const shortDesc = document.querySelector(`.short-desc-${index}`);
+          const fullDesc = document.querySelector(`.full-desc-${index}`);
+  
+          if (shortDesc.style.display === "none") {
+            shortDesc.style.display = "inline";
+            fullDesc.style.display = "none";
+          } else {
+            shortDesc.style.display = "none";
+            fullDesc.style.display = "inline";
+          }
+        }
+  
+        function searchCategories(event) {
+          const searchTerm = event.target.value.toLowerCase();
+          const categories = document.querySelectorAll('.category-item');
+          let resultsFound = false;
+  
+          categories.forEach(category => {
+            const categoryName = category.querySelector('h3').textContent.toLowerCase();
+            const categoryDesc = category.querySelector('p').textContent.toLowerCase();
+            
+            if (categoryName.includes(searchTerm) || categoryDesc.includes(searchTerm)) {
+              category.style.display = '';
+              resultsFound = true;
+            } else {
+              category.style.display = 'none';
+            }
+          });
+  
+          const noResultsMessage = document.getElementById('no-results');
+          if (!resultsFound) {
+            noResultsMessage.style.display = 'block';
+          } else {
+            noResultsMessage.style.display = 'none';
+          }
+        }
+      </script>
+</body>
+<%- include('./partials/footer'); %>

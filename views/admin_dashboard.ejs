@@ -1,0 +1,28 @@
+<%- include('./partials/header'); %>
+
+<body>
+  <%- include('./partials/adminNav'); %>
+  <%- include('./partials/landing'); %>
+
+  <div class="bg-white flex justify-center w-full py-12">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10 w-full max-w-6xl px-4">
+      <div class="rounded-lg p-6 text-center w-full">
+        <h3 class="font-semibold text-xl" style="color: #252956;">Total Providers</h3>
+        <p class="text-3xl font-bold mt-2" style="color: #252956;"><%= total_Providers %></p>
+        <img src="https://media.istockphoto.com/id/1303371086/vector/repairman-team-of-people-set-happy-workers-of-maintenance-repair-service-standing.jpg?s=612x612&w=0&k=20&c=Ywv9ZZY9WtDbNK5myMZ1N8XsAi4CmdJlbKsWCYrUOFY=" alt="Total Providers" class="mt-4 w-full h-44 object-cover rounded-md">
+      </div>
+      <div class="rounded-lg p-6 text-center w-full">
+        <h3 class="font-semibold text-xl" style="color: #252956;">Total Users</h3>
+        <p class="text-3xl font-bold mt-2" style="color: #252956;"><%= total_Users %></p>
+        <img src="https://img.freepik.com/premium-vector/people-point-empty-screen-mobile-phones-set-vector-illustration-cartoon-male-female-chara_573942-1902.jpg" alt="Total Users" class="mt-4 w-full h-48 object-cover rounded-md">
+      </div>
+      <div class="rounded-lg p-6 text-center w-full">
+        <h3 class="font-semibold text-xl" style="color: #252956;">Total Categories</h3>
+        <p class="text-3xl font-bold mt-2" style="color: #252956;"><%= total_Categories %></p>
+        <img src="https://media.istockphoto.com/id/1482639625/vector/customer-hand-give-rating-5-stars-vector-illustration-of-review-rating-and-feedback-flat.jpg?s=612x612&w=0&k=20&c=orp7jUW07FcjUmNb85TVSqpAfCIPu_mYiUPM42KKTIY=" alt="Total Categories" class="mt-4 w-full h-44 object-cover rounded-md">
+      </div>
+    </div>
+  </div>
+
+
+<%- include('./partials/footer'); %>

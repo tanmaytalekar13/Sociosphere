@@ -1,0 +1,87 @@
+<%- include('./partials/header'); %>
+<body class="bg-gray-50">
+    <!-- Fixed Navbar -->
+    <%- include('./partials/nav'); %>
+  <div class="min-h-screen">
+
+
+    <!-- Category Info -->
+    <div class="mt-20 p-6 text-center">
+        <h2 class="text-4xl font-semibold text-[#252956] flex justify-center items-center gap-2">
+            Providers for <%= category.name %>
+        </h2>
+        <p class="text-gray-600 mt-4 text-lg"><%= category.description %></p>
+    </div>
+
+    <!-- Providers Section -->
+    <div class="p-6 ">
+        <h3 class="text-2xl font-semibold text-gray-800 mb-6 flex items-center gap-2">
+            <i class="ri-user-search-line text-[#252956]"></i> Available Providers
+        </h3>
+        <div id="providers-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <% providers.forEach(provider => { %>
+                <div class="category-item bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-2xl transform hover:scale-105 transition-all max-w-xs mx-auto">
+                    <div class="relative">
+                        <img src="<%= provider.image %>" alt="<%= provider.name %>" class="w-full h-48 object-cover">
+                        <div class="absolute top-2 right-2 bg-[#252956] text-white text-xs px-3 py-1 rounded-full shadow">
+                            <i class="ri-medal-line "></i> <%= provider.experience %> yrs
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <h4 class="text-lg font-bold text-gray-800 mb-2 flex items-center gap-2">
+                            <i class="ri-user-line text-blue-600"></i> <%= provider.name %>
+                            <div class="h-6 w-6">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="rgba(0,119,46,1)">
+                                    <path d="M10.007 2.10377C8.60544 1.65006 7.08181 2.28116 6.41156 3.59306L5.60578 5.17023C5.51004 5.35763 5.35763 5.51004 5.17023 5.60578L3.59306 6.41156C2.28116 7.08181 1.65006 8.60544 2.10377 10.007L2.64923 11.692C2.71404 11.8922 2.71404 12.1078 2.64923 12.308L2.10377 13.993C1.65006 15.3946 2.28116 16.9182 3.59306 17.5885L5.17023 18.3942C5.35763 18.49 5.51004 18.6424 5.60578 18.8298L6.41156 20.407C7.08181 21.7189 8.60544 22.35 10.007 21.8963L11.692 21.3508C11.8922 21.286 12.1078 21.286 12.308 21.3508L13.993 21.8963C15.3946 22.35 16.9182 21.7189 17.5885 20.407L18.3942 18.8298C18.49 18.6424 18.6424 18.49 18.8298 18.3942L20.407 17.5885C21.7189 16.9182 22.35 15.3946 21.8963 13.993L21.3508 12.308C21.286 12.1078 21.286 11.8922 21.3508 11.692L21.8963 10.007C22.35 8.60544 21.7189 7.08181 20.407 6.41156L18.8298 5.60578C18.6424 5.51004 18.49 5.35763 18.3942 5.17023L17.5885 3.59306C16.9182 2.28116 15.3946 1.65006 13.993 2.10377L12.308 2.64923C12.1078 2.71403 11.8922 2.71404 11.692 2.64923L10.007 2.10377ZM6.75977 11.7573L8.17399 10.343L11.0024 13.1715L16.6593 7.51465L18.0735 8.92886L11.0024 15.9999L6.75977 11.7573Z"></path>
+                                </svg>
+                            </div>
+                        </h4>
+                        <p class="text-lg text-indigo-600 flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline text-yellow-400" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 .587l3.668 7.572 8.332 1.151-6.065 5.915 1.451 8.275-7.386-3.917-7.386 3.917 1.451-8.275-6.065-5.915 8.332-1.151z" />
+                            </svg>
+                            <span class="text-yellow-400 font-semibold text-xl ml-4"><%= provider.averageRating %></span>
+                        </p>
+                        <p class="text-sm text-gray-600 mb-2 flex items-center gap-2">
+                            <i class="ri-money-dollar-circle-line text-green-500"></i> Rs <%= provider.charges %> /hour
+                        </p>
+                        <button class="w-full bg-[#4D4D7A] hover:bg-[#252956] text-white py-2 rounded-md mt-2  transition-all">
+                            <a href="/provider/profile/<%= provider._id %>" class="text-white">View Profile</a>
+                        </button>
+                    </div>
+                </div>
+            <% }) %>
+        </div>
+        <div id="no-results" class="text-center text-gray-500 mt-6 hidden">No providers found.</div>
+    </div>
+    
+</div>
+    <script>
+        function searchProviders(event) {
+            const searchTerm = event.target.value.toLowerCase();
+            const providers = document.querySelectorAll('.category-item');
+            let resultsFound = false;
+  
+            providers.forEach(provider => {
+                const providerName = provider.querySelector('h4').textContent.toLowerCase();
+                const providerDesc = provider.querySelector('p').textContent.toLowerCase();
+                
+                if (providerName.includes(searchTerm) || providerDesc.includes(searchTerm)) {
+                    provider.style.display = '';
+                    resultsFound = true;
+                } else {
+                    provider.style.display = 'none';
+                }
+            });
+  
+            const noResultsMessage = document.getElementById('no-results');
+            if (!resultsFound) {
+                noResultsMessage.style.display = 'block';
+            } else {
+                noResultsMessage.style.display = 'none';
+            }
+        }
+    </script>
+    <%- include('./partials/footer'); %>
+</body>
+</html>

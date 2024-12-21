@@ -1,0 +1,35 @@
+<%- include('./partials/header'); %>
+
+<body class="bg-gray-50 font-sans antialiased">
+
+    <!-- Main container -->
+    <div class="min-h-screen flex flex-col justify-center items-center bg-gradient-to-r from-blue-100 to-blue-300">
+
+        <!-- Card container -->
+        <div class="bg-white p-8 rounded-lg shadow-lg max-w-lg w-full text-center">
+
+            <!-- Heading -->
+            <h1 class="text-3xl font-semibold text-gray-800 mb-6">Registration Successful!</h1>
+
+            <!-- Success message -->
+            <p class="text-lg text-gray-600 mb-6">
+                You have successfully registered, but your request is pending. Stay updated by checking your status.
+            </p>
+
+            <!-- Additional message -->
+            <p class="text-md text-gray-500 mb-6">
+                We will notify you as soon as your request is processed. In the meantime, feel free to browse other sections or contact support for assistance.
+            </p>
+
+            <!-- Button to Sign In -->
+            <a href="/provider/" class="inline-block mt-4 py-2 px-6 bg-blue-600 text-white font-semibold rounded-md shadow-lg hover:bg-blue-700 transition duration-300">
+                Sign In
+            </a>
+
+        </div>
+
+    </div>
+
+<%- include('./partials/footer'); %>
+
+</body>

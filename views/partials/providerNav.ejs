@@ -1,0 +1,91 @@
+<!-- navbar.ejs -->
+<nav class="bg-[#252956] fixed w-full top-0 left-0 z-50 shadow-md mb-10 p-3">
+    <div class="max-w-7xl mx-auto flex justify-between items-center">
+        <!-- Logo or Company Name -->
+        <a href="/" class="text-2xl font-semibold text-white font-poppins flex">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12.41V5a1 1 0 10-2 0v.59a1 1 0 00-.293.707v2.586l-1.293-1.293a1 1 0 00-1.414 0l-.293.293a1 1 0 000 1.414l2.293 2.293A1 1 0 007.414 12H9a1 1 0 001-1V9a1 1 0 01.293-.707l1.293-1.293 1.293 1.293a1 1 0 001.414 0l.293-.293a1 1 0 000-1.414L13 7.586V5.707A1 1 0 0012 5.59zM6 18a6 6 0 1112 0H6z" clip-rule="evenodd" />
+              </svg>
+            <span class="text-[#F5B800]">Socio</span>
+            <span class="text-white">sphere</span>
+        </a>
+
+        <!-- Navbar Links -->
+        <div class="hidden md:flex space-x-6">
+            <a href="/provider/dashboard" class="text-white hover:text-[#F5B800] text-lg font-medium">Home</a>
+            <a href="/provider/queue" class="text-white hover:text-[#F5B800] text-lg font-medium">Queue</a>
+            <a href="/provider/portfolio" class="text-white hover:text-[#F5B800] text-lg font-medium">Portfolio</a>
+            <a href="/provider/profile" class="text-white hover:text-[#F5B800] text-lg font-medium">Profile</a>
+            
+        </div>
+        
+
+        <!-- Logout Button -->
+        <div class="hidden md:flex items-center space-x-4 text-white ml-4">
+            <!-- Logout Button -->
+            <form action="/provider/logout" method="GET">
+                <button
+                    type="submit"
+                    class="bg-[#F5B800] hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded-lg"
+                >
+                    Logout
+                </button>
+            </form>
+        
+            <!-- Profile Image -->
+            <div class="flex items-center">
+                <% if (provider.image) { %>
+                    <img id="profileImage" src="<%= provider.image %>" 
+                         alt="Provider's profile picture" class="cursor-pointer"
+                         style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid #F5B800;" 
+                         />
+                <% } else { %>
+                    <img src="default-avatar.png" alt="Default Avatar" id="profileImage" class="cursor-pointer"
+                         style="width: 50px; height: 50px; border-radius: 50%; border: 2px solid #F5B800;"  />
+                <% } %>
+               
+            </div>
+        </div>
+        
+        
+        <!-- Mobile Menu Button -->
+        <div class="md:hidden">
+            <button id="mobile-menu-button" class="text-white">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 6h18M3 12h18M3 18h18"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="md:hidden hidden fixed top-26 left-0 w-full bg-[#252956] z-10">
+        <div class="space-y-4 mt-4 p-4">
+            <a href="/admin/dashboard" class="block text-white hover:text-[#F5B800] text-lg font-medium">Home</a>
+            <a href="/admin/categories" class="block text-white hover:text-[#F5B800] text-lg font-medium">About</a>
+            <a href="/admin/request" class="block text-white hover:text-[#F5B800] text-lg font-medium">Services</a>
+            <a href="/contact" class="block text-white hover:text-[#F5B800] text-lg font-medium">Contact</a>
+            <!-- Logout in mobile menu -->
+            <form action="/admin/logout" method="GET">
+                <button
+                    type="submit"
+                    class="bg-[#F5B800] hover:bg-yellow-600 text-white font-semibold py-2 px-4 rounded-lg w-full"
+                >
+                    Logout
+                </button>
+            </form>
+          
+        </div>
+    </div>
+    
+</nav>
+
+<script>
+    // Mobile menu toggle functionality
+    const mobileMenuButton = document.getElementById('mobile-menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+
+    mobileMenuButton.addEventListener('click', () => {
+        mobileMenu.classList.toggle('hidden');
+    });
+</script>

@@ -1,0 +1,157 @@
+<%- include('./partials/header'); %>
+<body>
+
+  <!-- Navbar -->
+  <%- include('./partials/nav'); %>
+
+  <!-- Profile Content -->
+  <div class="pt-20 px-4">
+    <div class="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-lg">
+        <h2 class="text-2xl font-bold mb-4">Provider Profile</h2>
+        <div class="space-y-4">
+            <div class="flex items-center space-x-4">
+                <!-- Provider Image -->
+                <div class="flex-shrink-0">
+                  <% if (provider.image) { %>
+                    <img src="<%= provider.image %>" alt="<%= provider.name %>'s Profile Picture" class="h-32 w-32 rounded-full object-cover profile-image" />
+                  <% } else { %>
+                    <div class="h-32 w-32 bg-gray-300 rounded-full flex items-center justify-center text-white text-2xl">N/A</div>
+                  <% } %>
+                </div>
+                <div>
+                  <h3 class="text-xl font-semibold"><%= provider.name %></h3>
+                  <p class="text-gray-600"><%= provider.category.name %></p>
+                </div>
+              </div>
+            <div>
+                <strong>Email:</strong> 
+                <!-- Redirects to Gmail Compose -->
+                <a href="https://mail.google.com/mail/?view=cm&fs=1&to=<%= provider.email %>" class="text-blue-600 hover:underline"><%= provider.email %></a>
+            </div>
+            <div>
+                <strong>Contact Number:</strong> 
+                <a href="tel:+<%= provider.contactNumber %>" class="text-blue-600 hover:underline"><%= provider.contactNumber %></a>
+            </div>
+            <div>
+                <strong>Experience:</strong> <%= provider.experience || "Not provided" %>
+            </div>
+            <div>
+                <strong>Charges:</strong> <%= provider.charges %> per hour
+            </div>
+            <div class="flex items-center space-x-4">
+              <strong class="text-gray-700">Ratings:</strong>
+              <div class="flex items-center text-yellow-500">
+                <span class="text-lg font-semibold"><%= provider.averageRating %></span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 .587l3.668 7.572 8.332 1.151-6.065 5.915 1.451 8.275-7.386-3.917-7.386 3.917 1.451-8.275-6.065-5.915 8.332-1.151z" />
+                </svg>
+                <span class="ml-2 text-gray-600">/ 5</span>
+              </div>
+              <a href="/booking/Reviews/<%=provider.id %>" class="text-blue-600 hover:text-blue-800 font-medium hover:underline transition duration-200">
+                Read review
+              </a>
+            </div>
+            
+            
+
+
+            <!-- Availability Section -->
+            <div>
+                <strong>Availability:</strong>
+                <ul class="mt-2">
+                    <% provider.availability.forEach(avail => { %>
+                        <li>
+                            <strong><%= avail.day %>:</strong> <%= avail.startTime %> - <%= avail.endTime %>
+                            <% if (avail.slots && avail.slots.length > 0) { %>
+                                <ul class="mt-1">
+                                    <% avail.slots.forEach(slot => { %>
+                                        <li><%= slot %></li>
+                                    <% }); %>
+                                </ul>
+                            <% } %>
+                        </li>
+                    <% }); %>
+                </ul>
+            </div>
+            
+            <div class="mt-4">
+              <a href="/book/<%-provider.id%>" class=" bg-[#4D4D7A] hover:bg-[#252956] text-white py-2 px-4 rounded-lg text-center">
+                  Book Appointment
+              </a>
+          </div> 
+        </div>
+    </div>
+  </div>
+
+  <div class="max-w-5xl mx-auto p-6  ">
+    <!-- Images Section -->
+    <section class="mb-12">
+        <h2 class="text-3xl font-bold text[#252956] mb-6 border-b border-gray-300 pb-2">
+            Images
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <% provider.portfolio.images.forEach(image => { %>
+                <div class="bg-white rounded-lg shadow-md overflow-hidden transform hover:scale-102 transition duration-200 ease-in-out">
+                    <div class="relative">
+                        <img src="<%= image.url %>" alt="<%= image.title %>" class="h-40 w-full object-cover">
+                        <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent opacity-50"></div>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="text-md font-semibold text-[#252956] truncate mb-1"><%= image.title %></h3>
+                        <p class="text-sm text-gray-600 line-clamp-2 mb-3"><%= image.description %></p>
+                        <p class="text-xs text-gray-500">Uploaded: <%= new Date(image.dateUploaded).toLocaleDateString() %></p>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+    </section>
+
+    <!-- Videos Section -->
+    <section>
+        <h2 class="text-3xl font-bold text-[#252956] mb-6 border-b border-gray-300 pb-2">
+            Videos
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <% provider.portfolio.videos.forEach(video => { %>
+                <div class="bg-white rounded-lg shadow-md overflow-hidden transform hover:scale-102 transition duration-200 ease-in-out">
+                    <div class="relative">
+                        <video
+                            class="h-40 w-full object-cover"
+                            src="<%= video.url %>"
+                            autoplay
+                            muted
+                            loop
+                            playsinline
+                        ></video>
+                        <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent opacity-50"></div>
+                    </div>
+                    <div class="p-4">
+                        <h3 class="text-md font-semibold text-gray-800 truncate mb-1"><%= video.title %></h3>
+                        <p class="text-sm text-gray-600 line-clamp-2 mb-3"><%= video.description %></p>
+                        <p class="text-xs text-gray-500">Uploaded: <%= new Date(video.dateUploaded).toLocaleDateString() %></p>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+    </section>
+</div>
+
+
+
+  <!-- Add JavaScript for Interactivity (Optional) -->
+  <script>
+    // Optional: Add interactivity (e.g., show modal for call or email)
+    const phoneLink = document.querySelector('a[href^="tel:"]');
+    const emailLink = document.querySelector('a[href^="mailto:"]');
+    
+    phoneLink.addEventListener('click', () => {
+        alert('You are about to make a call to ' + phoneLink.innerText);
+    });
+
+    emailLink.addEventListener('click', () => {
+        alert('You are about to send an email to ' + emailLink.innerText);
+    });
+  </script>
+  <%- include('./partials/footer'); %>
+</body>
+

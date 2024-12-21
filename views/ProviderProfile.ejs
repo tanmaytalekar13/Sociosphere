@@ -1,0 +1,243 @@
+<%- include('./partials/header'); %>
+<body>
+<%- include('./partials/providerNav'); %>
+<div class="w-full md:w-3/4 mx-auto p-8">
+    <!-- Provider Information Section -->
+    <div class="bg-white p-8 rounded-lg shadow-lg space-y-8">
+  
+      <!-- Profile Picture Section -->
+      <div class="flex justify-center mt-4">
+        <div class="w-36 h-36 rounded-full overflow-hidden border-4 border-blue-600 shadow-lg relative">
+            <% if (provider.image) { %>
+                <img id="profileImage" src="<%= provider.image %>" 
+                     alt="Provider's profile picture" class="w-full h-full object-cover cursor-pointer"
+                     style="border-radius: 50%; border: 2px solid #F5B800;" 
+                     onclick="document.getElementById('imageInput').click();" />
+            <% } else { %>
+                <img src="default-avatar.png" alt="Default Avatar" id="profileImage" class="w-full h-full object-cover cursor-pointer"
+                     style="border-radius: 50%; border: 2px solid #F5B800;" onclick="document.getElementById('imageInput').click();" />
+            <% } %>
+            <!-- Hidden input for file upload -->
+            <form id="changeImageForm" action="/provider/update-image" method="POST" enctype="multipart/form-data" class="hidden">
+                <input type="file" name="image" id="imageInput" accept="image/*" onchange="this.form.submit();" hidden>
+            </form>
+        </div>
+    </div>
+    
+  
+      <!-- Header Section -->
+      <div class="flex justify-between items-center">
+        <h3 class="text-3xl font-semibold text-gray-900">Provider Profile</h3>
+        <button id="updateProfileBtn" class="bg-blue-600 text-white px-6 py-3 rounded-lg text-sm font-medium flex items-center hover:bg-blue-700 transition duration-300 ease-in-out transform hover:scale-105">
+          <i class="ri-pencil-line mr-2"></i> Update Profile
+        </button>
+      </div>
+  
+      <!-- Provider Information -->
+      <div class="space-y-6">
+        <!-- Email & Contact -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div>
+            <p class="text-lg text-gray-700"><strong class="font-medium text-gray-900">Email:</strong> <span class="text-gray-800"><%= provider.email %></span></p>
+          </div>
+          <div>
+            <p class="text-lg text-gray-700"><strong class="font-medium text-gray-900">Contact:</strong> <span class="text-gray-800"><%= provider.contactNumber || 'N/A' %></span></p>
+          </div>
+        </div>
+  
+        <!-- Experience & Charges -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div>
+            <p class="text-lg text-gray-700"><strong class="font-medium text-gray-900">Experience:</strong> <span class="text-gray-800"><%= provider.experience || 'N/A' %></span></p>
+          </div>
+          <div>
+            <p class="text-lg text-gray-700"><strong class="font-medium text-gray-900">Charges:</strong> <span class="text-gray-800">Rs. <%= provider.charges %></span></p>
+          </div>
+        </div>
+  
+        <!-- Category & Status -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div>
+            <p class="text-lg text-gray-700"><strong class="font-medium text-gray-900">Category:</strong> <span class="text-gray-800"><%= provider.category.name %></span></p>
+          </div>
+          <div>
+            <p class="text-lg text-gray-700"><strong class="font-medium text-gray-900">Status:</strong>
+              <span class="inline-block px-6 py-2 rounded-full text-white 
+                <%= provider.status === 'approved' ? 'bg-green-500' : provider.status === 'pending' ? 'bg-yellow-500' : 'bg-red-500' %>">
+                <%= provider.status.charAt(0).toUpperCase() + provider.status.slice(1) %>
+              </span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Availability Section -->
+    <div class="bg-white p-8 rounded-lg shadow-lg mt-8">
+      <h3 class="text-2xl font-semibold text-gray-800 mb-4">Availability</h3>
+      
+      <!-- Button to Add Days -->
+      <button id="addDaysBtn" class="bg-green-600 text-white px-6 py-3 rounded-md text-sm font-medium mb-6 hover:bg-green-700 transition duration-300 ease-in-out transform hover:scale-105">
+        <i class="ri-add-line mr-2"></i> Add Days
+      </button>
+  
+      <!-- Existing availability list -->
+      <div class="space-y-6">
+        <% provider.availability.forEach(availability => { %>
+          <div class="bg-gray-50 p-6 rounded-lg shadow-sm hover:shadow-xl transition duration-300 ease-in-out">
+            <h4 class="text-xl font-semibold text-gray-700"><%= availability.day %></h4>
+            <p class="text-gray-600 text-sm"><strong>From:</strong> <%= availability.startTime %> <strong>To:</strong> <%= availability.endTime %></p>
+            <% if (availability.slots.length > 0) { %>
+              <p class="text-gray-600 text-sm"><strong>Available Slots:</strong> <%= availability.slots.join(', ') %></p>
+            <% } else { %>
+              <p class="text-gray-600 text-sm">No available slots for this day.</p>
+            <% } %>
+            <div class="flex space-x-4 mt-4">
+              <button class="bg-blue-600 text-white px-6 py-3 rounded-md text-sm font-medium hover:bg-blue-700 transition duration-300 ease-in-out transform hover:scale-105" onclick="openNewUpdateAvailabilityModal('<%= availability._id %>','<%= availability.startTime %>', '<%= availability.endTime %>')">
+                <i class="ri-pencil-line mr-2"></i> Update Availability
+              </button>
+              <!-- Delete Button -->
+              <form action="/provider/delete-availability/<%= availability._id %>" method="POST" class="inline-block">
+                <button type="submit" class="bg-red-600 text-white px-6 py-3 rounded-md text-sm font-medium hover:bg-red-700 transition duration-300 ease-in-out transform hover:scale-105">
+                  <i class="ri-delete-bin-5-line mr-2"></i> Delete Day
+                </button>
+              </form>
+            </div>
+          </div>
+        <% }) %>
+      </div>
+    </div>
+  </div>
+  
+ 
+  <!-- Update Profile Modal -->
+  <div id="updateProfileModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white p-8 rounded-lg shadow-lg w-full sm:w-96">
+      <h3 class="text-3xl font-semibold text-center text-gray-800 mb-6">Update Profile</h3>
+      <form action="/provider/update-profile" method="POST">
+        <div class="space-y-4">
+          <div>
+            <label for="updateContactNumber" class="block text-lg font-medium text-gray-700">Contact Number:</label>
+            <input type="text" id="updateContactNumber" name="contactNumber" class="w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" value="<%= provider.contactNumber %>" required>
+          </div>
+          <div>
+            <label for="updateExperience" class="block text-lg font-medium text-gray-700">Experience:</label>
+            <input type="text" id="updateExperience" name="experience" class="w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" value="<%= provider.experience %>" required>
+          </div>
+          <div>
+            <label for="updateCharges" class="block text-lg font-medium text-gray-700">Charges:</label>
+            <input type="number" id="updateCharges" name="charges" class="w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500" value="<%= provider.charges %>" required>
+          </div>
+        </div>
+        <div class="mt-6 flex justify-end space-x-4">
+          <button type="button" class="bg-gray-200 text-gray-800 px-6 py-2 rounded-md shadow-sm hover:bg-gray-300 transition-colors" onclick="closeUpdateProfileModal()">Cancel</button>
+          <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-md shadow-sm hover:bg-blue-700 transition-colors">Save</button>
+        </div>
+      </form>
+    </div>
+    
+  </div>
+  
+  <!-- Add Availability Modal -->
+  <div id="addAvailabilityModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center">
+    <div class="bg-white p-8 rounded-lg w-11/12 sm:w-3/4 md:w-1/3 lg:w-1/4 shadow-lg">
+      <h3 class="text-2xl font-semibold text-gray-800 mb-6 text-center">Add Availability</h3>
+      <form action="/provider/add-availability" method="POST">
+        <!-- Day Dropdown -->
+        <label for="day" class="block mb-2 text-sm font-medium text-gray-700">Day:</label>
+        <select id="day" name="day" class="w-full px-4 py-2 border rounded-md mb-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+          <option value="Monday">Monday</option>
+          <option value="Tuesday">Tuesday</option>
+          <option value="Wednesday">Wednesday</option>
+          <option value="Thursday">Thursday</option>
+          <option value="Friday">Friday</option>
+          <option value="Saturday">Saturday</option>
+          <option value="Sunday">Sunday</option>
+        </select>
+  
+        <!-- Start Time -->
+        <label for="startTime" class="block mb-2 text-sm font-medium text-gray-700">Start Time:</label>
+        <input type="time" id="startTime" name="startTime" class="w-full px-4 py-2 border rounded-md mb-4 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+  
+        <!-- End Time -->
+        <label for="endTime" class="block mb-2 text-sm font-medium text-gray-700">End Time:</label>
+        <input type="time" id="endTime" name="endTime" class="w-full px-4 py-2 border rounded-md mb-6 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500" required>
+  
+        <!-- Action Buttons -->
+        <div class="flex justify-between">
+          <button type="button" class="bg-gray-300 text-gray-800 px-6 py-2 rounded-md text-sm hover:bg-gray-400 transition" onclick="closeAddAvailabilityModal()">Cancel</button>
+          <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded-md text-sm hover:bg-green-700 transition">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+  
+  <!-- Update Availability Modal -->
+  <div id="updateAvailabilityModal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center">
+    <div class="bg-white p-6 rounded-lg w-11/12 sm:w-1/3 md:w-1/4">
+      <h3 class="text-2xl font-semibold text-gray-800 mb-6 text-center">Update Availability</h3>
+      <form action="/provider/update-availability" method="POST">
+        <input type="hidden" id="updateAvailabilityId" name="availabilityId">
+  
+        <label for="updateStartTime" class="block mb-2 text-sm font-medium text-gray-700">Start Time:</label>
+        <input type="time" id="updateStartTime" name="startTime" class="w-full px-4 py-2 border rounded-md mb-4 text-sm" required>
+  
+        <label for="updateEndTime" class="block mb-2 text-sm font-medium text-gray-700">End Time:</label>
+        <input type="time" id="updateEndTime" name="endTime" class="w-full px-4 py-2 border rounded-md mb-6 text-sm" required>
+  
+        <div class="flex justify-between">
+          <button type="button" class="bg-gray-300 text-gray-800 px-6 py-2 rounded-md text-sm" onclick="closeUpdateAvailabilityModal()">Cancel</button>
+          <button type="submit" class="bg-blue-600 text-white px-6 py-2 rounded-md text-sm">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+  <!-- JavaScript -->
+  <script>
+    // Open Add Availability Modal
+    const addDaysBtn = document.getElementById('addDaysBtn');
+    const addAvailabilityModal = document.getElementById('addAvailabilityModal');
+  
+    addDaysBtn.addEventListener('click', () => {
+      addAvailabilityModal.classList.remove('hidden');
+    });
+  
+    // Close Add Availability Modal
+    function closeAddAvailabilityModal() {
+      addAvailabilityModal.classList.add('hidden');
+    }
+  
+    // Open Update Availability Modal
+    function openNewUpdateAvailabilityModal(id, startTime, endTime) {
+      const updateAvailabilityModal = document.getElementById('updateAvailabilityModal');
+      document.getElementById('updateAvailabilityId').value = id;
+      document.getElementById('updateStartTime').value = startTime;
+      document.getElementById('updateEndTime').value = endTime;
+      updateAvailabilityModal.classList.remove('hidden');
+    }
+  
+    // Close Update Availability Modal
+    function closeUpdateAvailabilityModal() {
+      const updateAvailabilityModal = document.getElementById('updateAvailabilityModal');
+      updateAvailabilityModal.classList.add('hidden');
+    }
+  </script>
+  
+  <script>
+    const updateProfileBtn = document.getElementById('updateProfileBtn');
+    const updateProfileModal = document.getElementById('updateProfileModal');
+  
+    updateProfileBtn.addEventListener('click', () => {
+      updateProfileModal.classList.remove('hidden');
+    });
+  
+    function closeUpdateProfileModal() {
+      updateProfileModal.classList.add('hidden');
+    }
+  </script>
+
+    
+  </body>
+  <%- include('./partials/footer'); %>

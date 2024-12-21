@@ -1,0 +1,75 @@
+<%- include('./partials/header'); %>
+
+<body class="bg-gray-100">
+
+<div class="max-w-xl mx-auto bg-white p-6 shadow-md rounded-lg mt-10">
+    <!-- Company Logo and Name -->
+    <div class="text-center mb-4">
+        <img src="https://img.freepik.com/premium-vector/black-handyman-character-holding-multiple-tools-electrician-plumber-carpenter-painter-repairman_375605-487.jpg" alt="Handyman" class="mx-auto w-24 h-auto mb-4">
+        <p class="text-4xl font-bold text-[#252956] font-poppins">
+            <span class="text-[#252956]">Socio</span>
+            <span class="text-yellow-500">sphere</span>
+        </p>
+        <p class="mt-2 text-base text-[#252956]">"Manage Services. Monitor Providers. Ensure Quality."</p>
+    </div>
+
+    <h2 class="text-xl font-bold mb-4 text-center">Provider Registration</h2>
+    
+    <form action="/provider/register" method="POST">
+        <!-- Name Field -->
+        <div class="mb-3">
+            <input type="text" id="name" name="name" class="w-full p-2 border border-gray-300 rounded mt-1 text-sm" placeholder="Enter your name" required>
+        </div>
+        
+        <!-- Email Field -->
+        <div class="mb-3">
+            <input type="email" id="email" name="email" class="w-full p-2 border border-gray-300 rounded mt-1 text-sm" placeholder="Enter your email" required>
+        </div>
+
+        <!-- Password Field -->
+        <div class="mb-3">
+            <input type="password" id="password" name="password" class="w-full p-2 border border-gray-300 rounded mt-1 text-sm" placeholder="Enter your password" required>
+        </div>
+
+        <!-- Contact Number Field -->
+        <div class="mb-3">
+            <input type="text" id="contactNumber" name="contactNumber" class="w-full p-2 border border-gray-300 rounded mt-1 text-sm" placeholder="Enter your contact number" required>
+        </div>
+
+        <!-- Charges Field -->
+        <div class="mb-3">
+            <input type="number" id="charges" name="charges" class="w-full p-2 border border-gray-300 rounded mt-1 text-sm" placeholder="Enter your charges" required>
+        </div>
+
+        <!-- Experience Field -->
+        <div class="mb-3">
+            <input type="text" id="experience" name="experience" class="w-full p-2 border border-gray-300 rounded mt-1 text-sm" placeholder="Enter your experience" required>
+        </div>
+
+        <!-- Category Field (Dropdown) -->
+        <div class="mb-3">
+            <select id="category" name="category" class="w-full p-2 border border-gray-300 rounded mt-1 text-sm" required>
+                <option value="">Select Category</option>
+                <% categories.forEach(function(category) { %>
+                    <option value="<%= category._id %>"><%= category.name %></option>
+                <% }); %>
+            </select>
+        </div>
+
+        <!-- Submit Button -->
+        <div class="mt-4">
+            <button type="submit" class="w-full py-2 bg-[#252956] text-white rounded text-sm">Register</button>
+        </div>
+    </form>
+
+    <!-- Login Link -->
+    <div class="text-center mt-3">
+        <p class="text-sm text-gray-700">
+            Already have an account? 
+            <a href="/provider/" class="font-medium text-blue-500 hover:text-blue-400">Login here</a>
+        </p>
+    </div>
+</div>
+
+</body>
+</html>

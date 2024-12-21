@@ -1,0 +1,95 @@
+<div class="w-full h-screen flex flex-col justify-center items-center text-center px-4">
+    <h1 id="heading1" class="font-bold text-[#252956] text-4xl sm:text-3xl lg:text-8xl opacity-0 mt-10">For every need</h1>
+  
+    <h1 id="heading2" class="font-bold text-[#252956] text-2xl sm:text-5xl lg:text-8xl relative mt-8 opacity-0">
+      <span class="hover-effect text-5xl sm:text-3xl md:text-5xl lg:text-8xl hover:italic">Socio</span>
+      <span class="hover-effect text-yellow-400 text-5xl sm:text-3xl md:text-5xl lg:text-8xl hover:italic">sphere</span>
+      <span class="text-5xl sm:text-3xl md:text-5xl lg:text-8xl">will lead!</span>
+    </h1>
+
+    <img id="sociosphere-image" class="img-animate max-w-[250px] h-auto mt-6 absolute top-1/4 transform -translate-y-1/2 left-1/2 -translate-x-1/2 hover:opacity-70 transition-opacity duration-300" src="https://img.freepik.com/premium-vector/set-working-professions-painter-electrician-carpenter-plumber-landscaper-engineer_165429-714.jpg" alt="Sociosphere Image" />
+    <button id="get-started-btn" class="bg-[#252956] hover:bg-yellow-500 hover:text-black text-white px-8 py-4 rounded-3xl mt-6 opacity-0 cursor-pointer transition-all duration-300 ease-in-out transform hover:bg-blue-700 text-xl">
+      Get Started
+    </button>
+    
+  </div>
+
+  <script>
+    window.addEventListener('load', () => {
+      // GSAP animation for the first heading (slides from left)
+      gsap.to("#heading1", {
+        opacity: 1,
+        x: 0,
+        duration: 1.5,
+        ease: "power2.out",
+        delay: 0.5
+      });
+
+      // GSAP animation for the second heading (slides from right with opacity change)
+      gsap.to("#heading2", {
+        opacity: 1,
+        x: 0,
+        duration: 1.5,
+        ease: "power2.out",
+        delay: 1,
+        fontSize: "8rem", // Increase size after animation
+      });
+
+      // GSAP animation for the image (slide up effect)
+      const image = document.getElementById('sociosphere-image');
+      gsap.to(image, {
+        opacity: 1,
+        y: -25,
+        duration: 1,
+        ease: "power2.out",
+        delay: 1.5
+      });
+      gsap.to("#get-started-btn", {
+      opacity: 1,
+      y: 0,
+      duration: 1,
+      ease: "power2.out",
+      delay: 2
+    });
+    });
+    document.getElementById('get-started-btn').addEventListener('click', () => {
+    const btn = document.getElementById('get-started-btn');
+    
+    // GSAP animation to move the button to the right
+    gsap.to(btn, {
+      x: 300, // Move the button to the right
+      opacity: 0,
+      duration: 1,
+      ease: "power2.out",
+      onComplete: () => {
+        // Redirect to /provider/profile after animation
+        window.location.href = '/provider/profile';
+      }
+    });
+  });
+  </script>
+  
+  <style>
+    /* Hover effect for the text spans */
+    .hover-effect {
+      transition: all 0.3s ease;
+    }
+
+    .hover-effect:hover {
+      color: transparent;
+      -webkit-text-stroke: 2px yellow; /* Yellow border for 'Socio' */
+      transform: rotate(-5deg); /* Slight tilt to the left */
+    }
+
+    .hover-effect.text-yellow-400:hover {
+      color: transparent;
+      -webkit-text-stroke: 2px #252956; /* Blue border for 'sphere' */
+      transform: rotate(5deg); /* Slight tilt to the right */
+    }
+
+    /* Get Started Button styling */
+  #get-started-btn {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  </style>

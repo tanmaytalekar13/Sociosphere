@@ -1,0 +1,147 @@
+<%- include('./partials/header'); %>
+<body class="bg-gray-100">
+  <%- include('./partials/adminNav'); %>
+    <div class="h-screen w-full">
+          <!-- Request for Provider Section -->
+  <div class="bg-white shadow-lg rounded-lg p-6 border-t-4 border-blue-500 max-h-96 overflow-y-auto mx-auto my-8 max-w-4xl ">
+    <h3 class="text-2xl font-bold text-gray-800 mb-6">Request for Provider</h3>
+    <ul class="divide-y divide-gray-200" id="requests-list">
+      <% requests.forEach((request, index) => { %>
+      <li id="request-<%= request._id %>" class="py-6 flex justify-between items-start <%= index >= 5 ? 'hidden' : '' %>">
+        <div>
+          <p class="font-medium text-gray-700 mb-1">Provider: 
+            <% if (request.provider) { %>
+              <span class="text-gray-800"><%= request.provider.name %></span>
+            <% } else { %>
+              <span class="text-red-600">Not assigned</span>
+            <% } %>
+          </p>
+          <p class="text-sm text-gray-600">Category: <%= request.category ? request.category.name : 'Unknown' %></p>
+          <p class="text-sm text-gray-600">Status: <%= request.status %></p>
+        </div>
+        <div class="flex gap-3">
+          <button class="bg-green-500 hover:bg-green-400 text-white px-4 py-2 rounded-lg shadow transition duration-200" 
+                  onclick="updateRequest('<%= request._id %>', 'approved')">
+            Accept
+          </button>
+          <button class="bg-red-500 hover:bg-red-400 text-white px-4 py-2 rounded-lg shadow transition duration-200" 
+                  onclick="openFeedbackModal('<%= request._id %>')">
+            Reject
+          </button>
+          <button class="bg-blue-500 hover:bg-blue-400 text-white px-4 py-2 rounded-lg shadow transition duration-200" 
+                  onclick="viewProfile('<%= request.provider ? request.provider._id : '' %>')">
+            View Profile
+          </button>
+        </div>
+      </li>
+      <% }); %>
+    </ul>
+    <% if (requests.length > 5) { %>
+    <div class="text-center mt-4">
+      <button id="show-more-btn" class="bg-blue-500 hover:bg-blue-400 text-white px-4 py-2 rounded-lg shadow transition duration-200" onclick="showMoreRequests()">
+        Show More
+      </button>
+    </div>
+    <% } %>
+  </div>
+    </div>
+  <!-- Feedback Modal -->
+  <div id="feedback-modal" class="hidden fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg shadow-lg p-6 w-96">
+      <h3 class="text-lg font-semibold text-gray-800 mb-4">Provide Feedback</h3>
+      <textarea id="feedback-input" class="w-full border border-gray-300 rounded-lg p-3 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-400" rows="4" placeholder="Enter your feedback here..."></textarea>
+      <div class="flex justify-end gap-4">
+        <button class="bg-gray-300 hover:bg-gray-200 text-gray-800 px-4 py-2 rounded-lg" onclick="closeFeedbackModal()">Cancel</button>
+        <button class="bg-blue-500 hover:bg-blue-400 text-white px-4 py-2 rounded-lg" onclick="submitFeedback()">Submit</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    let currentRequestId = null;
+
+    function openFeedbackModal(requestId) {
+      currentRequestId = requestId;
+      document.getElementById('feedback-modal').classList.remove('hidden');
+    }
+
+    function closeFeedbackModal() {
+      currentRequestId = null;
+      document.getElementById('feedback-modal').classList.add('hidden');
+    }
+
+    async function submitFeedback() {
+      const feedback = document.getElementById('feedback-input').value.trim();
+      if (!feedback) {
+        alert("Feedback is required.");
+        return;
+      }
+
+      try {
+        const response = await fetch(`/admin/requests/${currentRequestId}/approve`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ status: 'rejected', feedback }),
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(errorText);
+        }
+
+        alert("Request rejected successfully.");
+        document.getElementById(`request-${currentRequestId}`).remove();
+        closeFeedbackModal();
+      } catch (error) {
+        console.error("Error rejecting request:", error);
+        alert("Failed to process the rejection.");
+      }
+    }
+
+    async function updateRequest(requestId, status) {
+      try {
+        const response = await fetch(`/admin/requests/${requestId}/approve`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ status }),
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(errorText);
+        }
+
+        alert(`Request ${status === "approved" ? "approved" : "rejected"} successfully.`);
+        document.getElementById(`request-${requestId}`).remove();
+      } catch (error) {
+        console.error("Error updating request:", error);
+        alert("Failed to process the request.");
+      }
+    }
+
+    function showMoreRequests() {
+      const hiddenRequests = document.querySelectorAll('#requests-list .hidden');
+      hiddenRequests.forEach((request, index) => {
+        if (index < 5) {
+          request.classList.remove('hidden');
+        }
+      });
+
+      if (hiddenRequests.length <= 5) {
+        document.getElementById('show-more-btn').remove();
+      }
+    }
+
+    function viewProfile(providerId) {
+      if (!providerId) {
+        alert("No provider assigned.");
+        return;
+      }
+      window.location.href = `/admin/requests/${providerId}/profile`;
+    }
+  </script>
+
+<%- include('./partials/footer'); %>

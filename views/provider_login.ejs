@@ -1,0 +1,71 @@
+<%- include('./partials/header'); %>
+
+<body class="bg-white font-sans leading-relaxed tracking-wide">
+    <div class="flex items-center justify-center min-h-screen py-12 px-4 sm:px-6 lg:px-8">
+        <div class="w-full max-w-md space-y-8 bg-white shadow-xl rounded-lg p-8">
+            <!-- Company Name (Sociosphere) -->
+            <div class="text-center">
+                <img src="https://img.freepik.com/premium-vector/black-handyman-character-holding-multiple-tools-electrician-plumber-carpenter-painter-repairman_375605-487.jpg" alt="Handyman" class="mx-auto w-24 h-auto mb-4">
+                <p class="text-4xl font-bold text-[#252956] font-poppins">
+                    <span class="text-[#252956]">Socio</span>
+                    <span class="text-yellow-500">sphere</span>
+                </p> <!-- Bold and larger text -->
+                <p class="mt-4 text-lg text-[#252956]">"Manage Services. Monitor Providers. Ensure Quality."</p> <!-- Quote below the company name -->
+            </div>
+
+            <!-- Admin Login Section -->
+            <div class="text-center">
+                <h1 class="text-2xl font-semibold text-[#252956] mt-8">Provider Login</h1>
+            </div>
+
+            <!-- Login Form -->
+            <form class="mt-8 space-y-6" action="/provider/login" method="POST">
+                <div class="rounded-md shadow-sm space-y-4">
+                    <div>
+                        <input id="email" name="email" type="email" required
+                            class="appearance-none rounded-md relative block w-full px-4 py-3 border border-gray-300 text-[#252956] focus:outline-none focus:ring-2 focus:ring-[#252956] focus:border-[#252956] sm:text-sm"
+                            placeholder="Enter your email">
+                    </div>
+                    <div>
+                        <input id="password" name="password" type="password" required
+                            class="appearance-none rounded-md relative block w-full px-4 py-3 border border-gray-300 text-[#252956] focus:outline-none focus:ring-2 focus:ring-[#252956] focus:border-[#252956] sm:text-sm"
+                            placeholder="Enter your password">
+                    </div>
+                </div>
+
+                <div class="flex items-center justify-between">
+                    <div class="text-sm">
+                        <a href="#" class="font-medium text-[#252956] hover:text-[#1a1f34]">Forgot your password?</a>
+                    </div>
+                </div>
+
+                <div>
+                    <button type="submit"
+                        class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-[#252956] hover:bg-[#1a1f34] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#252956]">
+                        Sign In
+                    </button>
+                </div>
+            </form>
+
+            <!-- Register Link -->
+            <div class="text-center mt-4">
+                <p class="text-sm text-[#252956]">
+                    Don't have an account? 
+                    <a href="/provider/register" class="font-medium text-yellow-500 hover:text-yellow-400">Register here</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        if (window.history && window.history.pushState) {
+            window.history.pushState(null, null, window.location.href);
+            window.onpopstate = function () {
+                // Redirect to login page if back button is pressed
+                window.location.href = '/admin/login';
+            };
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sociosphere - Admin Login</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body class=" font-sans leading-relaxed tracking-wide">
+    <div class="flex items-center justify-center min-h-screen py-12 px-4 sm:px-6 lg:px-8">
+        <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6 space-y-6">
+            <!-- Company Name (Sociosphere) -->
+            <div class="text-center">
+                <img src="https://img.freepik.com/premium-vector/black-handyman-character-holding-multiple-tools-electrician-plumber-carpenter-painter-repairman_375605-487.jpg" 
+                     alt="Handyman" class="mx-auto w-20 h-auto mb-4 rounded-lg">
+                <p class="text-3xl font-bold text-[#252956] font-poppins">
+                    <span class="text-[#252956]">Socio</span>
+                    <span class="text-yellow-500">sphere</span>
+                </p>
+                <p class="mt-2 text-sm text-gray-600">"Manage Services. Monitor Providers. Ensure Quality."</p>
+            </div>
+
+            <!-- Admin Login Section -->
+            <div class="text-center">
+                <h1 class="text-xl font-semibold text-[#252956]">Admin Login</h1>
+            </div>
+
+            <!-- Login Form -->
+            <form class="space-y-4" action="/admin/login" method="POST">
+                <!-- Email -->
+                <div>
+                    <input
+                        id="email"
+                        name="email"
+                        type="email"
+                        required
+                        placeholder="Email Address"
+                        class="appearance-none rounded-md block w-full px-4 py-3 border border-gray-300 text-[#252956] focus:outline-none focus:ring-2 focus:ring-[#252956] focus:border-[#252956] sm:text-sm"
+                    />
+                </div>
+
+                <!-- Password -->
+                <div>
+                    <input
+                        id="password"
+                        name="password"
+                        type="password"
+                        required
+                        placeholder="Password"
+                        class="appearance-none rounded-md block w-full px-4 py-3 border border-gray-300 text-[#252956] focus:outline-none focus:ring-2 focus:ring-[#252956] focus:border-[#252956] sm:text-sm"
+                    />
+                </div>
+
+                <!-- Forgot Password -->
+                <div class="flex items-center justify-end">
+                    <a href="#" class="text-sm font-medium text-[#252956] hover:text-[#1a1f34]">Forgot your password?</a>
+                </div>
+
+                <!-- Submit Button -->
+                <div>
+                    <button type="submit"
+                        class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-[#252956] hover:bg-[#1a1f34] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#252956]">
+                        Sign In
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        if (window.history && window.history.pushState) {
+            window.history.pushState(null, null, window.location.href);
+            window.onpopstate = function () {
+                // Redirect to login page if back button is pressed
+                window.location.href = '/admin/login';
+            };
+        }
+    </script>
+</body>
+</html>

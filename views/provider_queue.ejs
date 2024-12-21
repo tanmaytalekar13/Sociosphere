@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Provider Queue</title>
+    <!-- Include Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Include Font Awesome -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+    <!-- Include Flatpickr CSS -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css"
+    />
+  </head>
+  <body class="bg-white">
+    <%- include('./partials/providerNav'); %>
+    <div class="h-screen w-full ">
+      <div class="max-w-lg mx-auto bg-white p-6 rounded-lg mt-4">
+        <!-- Provider Dropdown -->
+        <label for="providerSelect" class="block text-[#252956] font-medium mb-2">
+          Select a Provider
+        </label>
+        <select
+          id="providerSelect"
+          name="provider"
+          required
+          class="w-full border border-gray-300 rounded-lg p-3 text-[#252956] focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          <!-- Dynamic provider options will be populated here -->
+          <option value="<%= provider._id %>"><%= provider.name %></option>
+        </select>
+  
+        <!-- Date Picker -->
+        <div class="mt-4">
+          <label for="datePicker" class="block text-[#252956] font-medium mb-2">
+            Select a Date
+          </label>
+          <input
+            type="text"
+            id="datePicker"
+            name="date"
+            class="w-full border border-gray-300 rounded-lg p-3 text-[#252956] focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Pick a date"
+            disabled
+          />
+        </div>
+      </div>
+  
+      <!-- Queue Section -->
+      <div class="max-w-2xl mx-auto p-4 rounded-lg mt-8">
+        <div id="queueData" class="mt-6 hidden bg-blue-50 p-4 rounded-lg">
+          <ul
+            id="queueList"
+            class="list-disc pl-5 text-[#252956] max-h-40 overflow-y-auto"
+          >
+            <!-- Dynamic queue items will be added here -->
+          </ul>
+          <p id="estimatedWaitTime" class="mt-2 text-[#252956] font-medium"></p>
+        </div>
+      </div>
+      
+    </div>
+    
+
+    <!-- Include Flatpickr JS -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+      const providerSelect = document.getElementById("providerSelect");
+      const datePicker = document.getElementById("datePicker");
+      let flatpickrInstance;
+
+      // Initialize flatpickr for the date picker on page load
+      flatpickrInstance = flatpickr(datePicker, {
+        dateFormat: "Y-m-d",
+        minDate: "today", // Prevent selecting past dates
+      });
+
+      // Function to fetch unavailable days and update the date picker
+      async function updateDatePicker(providerId) {
+        try {
+          const response = await fetch(`/queue/${providerId}`);
+          const unavailableDays = await response.json();
+
+          console.log("Unavailable Days:", unavailableDays); // Debug log
+
+          // Enable the date picker and reinitialize Flatpickr
+          datePicker.disabled = false;
+          if (flatpickrInstance) {
+            flatpickrInstance.destroy(); // Destroy the previous instance
+          }
+
+          flatpickrInstance = flatpickr(datePicker, {
+            dateFormat: "Y-m-d",
+            minDate: "today",
+            disable: [
+              function (date) {
+                // Check if the day of the week is in the unavailableDays array
+                return unavailableDays.includes(date.getDay());
+              },
+            ],
+          });
+        } catch (error) {
+          console.error("Error fetching unavailable days:", error);
+        }
+      }
+
+      // Load data on page load if a provider is selected
+      window.onload = async () => {
+        if (providerSelect.value) {
+          await updateDatePicker(providerSelect.value);
+        }
+      };
+
+      // Event listener for provider selection change
+      providerSelect.addEventListener("change", async () => {
+        const providerId = providerSelect.value;
+        if (providerId) {
+          await updateDatePicker(providerId);
+        } else {
+          datePicker.disabled = true;
+        }
+      });
+
+      // Event listener for date selection change
+      datePicker.addEventListener("change", async function () {
+        const providerId = providerSelect.value;
+        const selectedDate = this.value;
+
+        if (!providerId || !selectedDate) return;
+
+        try {
+          const response = await fetch(
+            `/queue/size/${providerId}/${selectedDate}`
+          );
+          const data = await response.json();
+
+          const queueList = document.getElementById("queueList");
+          const estimatedWaitTime =
+            document.getElementById("estimatedWaitTime");
+          const queueDataDiv = document.getElementById("queueData");
+
+          // Clear previous data
+          queueList.innerHTML = "";
+          estimatedWaitTime.textContent = "";
+
+          if (data.queueSize === 0) {
+            queueList.innerHTML =
+              "<li class='text-center py-4 text-gray-500'>No bookings for the selected date.</li>";
+          } else {
+            data.queueData.forEach((item, index) => {
+              console.log(item._id);
+              let statusColor;
+              let statusIcon;
+
+              // Determine status color and icon
+              switch (item.status) {
+                case "pending":
+                  statusColor = "text-yellow-500";
+                  statusIcon = `<i class="fas fa-clock"></i>`;
+                  break;
+                case "In progress":
+                  statusColor = "text-blue-500";
+                  statusIcon = `<i class="fas fa-spinner animate-spin"></i>`;
+                  break;
+                case "completed":
+                  statusColor = "text-green-500";
+                  statusIcon = `<i class="fas fa-check-circle"></i>`;
+                  break;
+                default:
+                  statusColor = "text-gray-500";
+                  statusIcon = "";
+              }
+
+              queueList.innerHTML += `
+                  <li class="flex flex-col justify-between items-start p-3 border-b border-gray-200">
+    <div class="flex justify-between w-full items-center mb-2">
+        <span class="text-[#252956] text-sm font-medium">Position: ${item.queuePosition} <span class="text-gray-400">(in line)</span></span>
+        <span class="${statusColor} text-sm flex items-center">${statusIcon} ${item.status}</span>
+    </div>
+    <div class="flex justify-between w-full items-center">
+        <span class="text-[#252956] font-medium text-sm"><i class="ri-user-line"></i> ${item.userName}</span>
+        <div class="flex space-x-2 text-xs">
+            <button class="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-opacity-50 transition ease-in-out duration-150" onclick="updateStatus('${item._id}', 'pending')">Pending</button>
+            <button class="bg-blue-500 text-white px-2 py-1 rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition ease-in-out duration-150" onclick="updateStatus('${item._id}', 'In progress')">In Progress</button>
+            <button class="bg-green-500 text-white px-2 py-1 rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 transition ease-in-out duration-150" onclick="updateStatus('${item._id}', 'completed')">Complete</button>
+        </div>
+    </div>
+    <span class="text-gray-500 text-xs mt-2 font-medium
+        ${item.complexity === 'simple' ? 'text-green-500' :
+        item.complexity === 'moderate' ? 'text-yellow-500' :
+        item.complexity === 'complex' ? 'text-orange-500' :
+        item.complexity === 'super complex' ? 'text-red-500' : ''}">
+        Complexity: ${item.complexity}
+    </span>
+    <div class="flex justify-between items-center space-x-6 mt-2">
+    <div class="flex flex-col">
+        <span class="text-gray-500 text-xs font-medium">Address:</span>
+        <span class="text-[#252956] text-sm">${item.address}</span>
+    </div>
+    <div class="flex flex-col">
+        <span class="text-gray-500 text-xs font-medium">Phone:</span>
+        <a href="tel:${item.userContact}" class="text-blue-500 text-sm">${item.userContact}</a>
+    </div>
+</div>
+
+</div>
+
+</li>
+
+
+
+                    `;
+            });
+          }
+
+          queueDataDiv.classList.remove("hidden");
+        } catch (error) {
+          console.error("Error fetching queue data:", error);
+        }
+      });
+
+      // Function to update the status of a queue item
+      async function updateStatus(queueItemId, newStatus) {
+        console.log(queueItemId, newStatus);
+        try {
+          const response = await fetch(`/provider/queue/status`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ status: newStatus, id: queueItemId }),
+          });
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+
+          const result = await response.json();
+
+          if (result.success) {
+            alert(`Status updated to ${newStatus}`);
+            // Reload the data or update the specific item dynamically
+            datePicker.dispatchEvent(new Event("change"));
+          } else {
+            alert(
+              `Failed to update status: ${result.message || "Unknown error"}`
+            );
+          }
+        } catch (error) {
+          console.error("Error updating status:", error);
+          alert(
+            "An error occurred while updating the status. Please try again later."
+          );
+        }
+      }
+      document.addEventListener("DOMContentLoaded", () => {
+  const queueList = document.getElementById("queueList");
+  const queueItems = queueList.children;
+
+  if (queueItems.length > 3) {
+    queueList.classList.add("max-h-40", "overflow-y-auto");
+  }
+});
+
+    </script>
+      <%- include('./partials/footer'); %>
+  </body>
+

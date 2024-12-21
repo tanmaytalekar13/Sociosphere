@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thank You</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        .fade-out {
+            animation: fadeOut 1s forwards;
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 0.2;
+            }
+            to {
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen relative">
+    <div class="relative w-full max-w-lg">
+        <!-- GIF background positioned at the bottom left -->
+        <img id="thankYouGif" src="https://cdn.pixabay.com/animation/2024/05/02/07/43/07-43-00-535_512.gif" alt="Thank you GIF" class="absolute bottom-0 left-0 w-full h-full object-cover opacity-20 z-[-1] rounded-lg">
+        <!-- Content card -->
+        <div class="bg-white p-8 rounded-lg shadow-lg">
+            <div class="text-center mb-4">
+                <h1 class="text-3xl font-bold text-green-600">Your service is booked successfully!</h1>
+                <p class="text-gray-700 text-lg mt-2">Thank you for booking a service.</p>
+                <p class="text-gray-600 mt-2">Our provider will contact you according to your priority on this day.</p>
+            </div>
+
+            <div class="mt-6 space-y-4">
+                <div class="flex justify-between">
+                    <span class="font-semibold text-gray-800">User: </span>
+                    <span class="text-gray-600"><%= userName %></span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="font-semibold text-gray-800">Service:</span>
+                    <span class="text-gray-600"><%= categoryName %></span>
+                </div> 
+                <div class="flex justify-between">
+                    <span class="font-semibold text-gray-800">Date:</span>
+                    <span class="text-gray-600"><%= Date %></span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="font-semibold text-gray-800">Transaction ID:</span>
+                    <span class="text-gray-600"><%= booking.paymentDetails.transactionId %></span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="font-semibold text-gray-800">Queue Position:</span>
+                    <span class="text-gray-600"><%= booking.queuePosition %></span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="font-semibold text-gray-800">Address:</span>
+                    <span class="text-gray-600"><%= booking.address %></span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="font-semibold text-gray-800">Complexity:</span>
+                    <span class="text-gray-600"><%= booking.complexity %></span>
+                </div>
+            </div>
+
+            <div class="mt-8 text-center">
+                <a href="/index" class="bg-[#252956] text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition duration-300">Go to Home</a>
+            </div>
+        </div>
+    </div>
+    <footer class="mt-10 text-center text-gray-600">
+        <p class="italic">We value your trust and strive to provide exceptional service every time.</p>
+    </footer>
+
+    <script>
+        setTimeout(() => {
+            document.getElementById('thankYouGif').classList.add('fade-out');
+        }, 5000);
+    </script>
+</body>
+</html>

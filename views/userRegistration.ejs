@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sociosphere - Register</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-50 font-sans flex items-center justify-center min-h-screen">
+    <div class="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
+        <!-- Logo and Title -->
+        <div class="text-center mb-8">
+            <img src="https://img.freepik.com/premium-vector/black-handyman-character-holding-multiple-tools-electrician-plumber-carpenter-painter-repairman_375605-487.jpg" 
+                 alt="Handyman" class="mx-auto w-20 h-auto mb-4 rounded-lg">
+            <h1 class="text-4xl font-bold text-[#252956] font-poppins">
+                <span>Socio</span><span class="text-yellow-500">sphere</span>
+            </h1>
+            <p class="mt-2 text-sm text-[#252956]">"Manage Services. Monitor Providers. Ensure Quality."</p>
+        </div>
+
+        <!-- Registration Form Title -->
+        <h2 class="text-[#252956] font-semibold text-2xl mb-6 text-center">Register to Sociosphere</h2>
+
+        <!-- Registration Form -->
+        <form action="/register" method="POST" class="space-y-6">
+            <!-- Full Name -->
+            <div>
+                <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    required
+                    placeholder="Full Name"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                />
+            </div>
+
+            <!-- Email -->
+            <div>
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    required
+                    placeholder="Email Address"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                />
+            </div>
+
+            <!-- Password -->
+            <div>
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    required
+                    placeholder="Password"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                />
+            </div>
+
+            <!-- Contact Number -->
+            <div>
+                <input
+                    type="tel"
+                    id="contactNumber"
+                    name="contactNumber"
+                    required
+                    placeholder="Contact Number"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                />
+            </div>
+
+            <!-- Address -->
+            <div>
+                <textarea
+                    id="address"
+                    name="address"
+                    required
+                    rows="3"
+                    placeholder="Address"
+                    class="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none"
+                ></textarea>
+            </div>
+
+            <!-- Register Button -->
+            <button
+                type="submit"
+                class="w-full bg-[#252956] text-white py-3 rounded-lg hover:bg-[#1a1f34] transition-transform transform hover:scale-105 shadow-md font-medium"
+            >
+                Register
+            </button>
+        </form>
+
+        <!-- Login Redirect -->
+        <p class="mt-6 text-center text-gray-500 text-sm">
+            Already have an account? 
+            <a href="/" class="text-blue-500 hover:underline font-medium">Login here</a>
+        </p>
+    </div>
+</body>
+</html>

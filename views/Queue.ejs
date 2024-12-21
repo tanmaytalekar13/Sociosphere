@@ -1,0 +1,158 @@
+<%- include('./partials/header'); %>
+<body class="">
+    <%- include('./partials/nav'); %>
+    <div class="h-screen">
+
+
+    <div class="max-w-lg mx-auto bg-white p-6 rounded-lg shadow-md mt-24 ">
+        <!-- Provider Dropdown -->
+        <label for="providerSelect" class="block text-[#252956] font-medium mb-2">
+            Select a Provider
+        </label>
+        <select
+            id="providerSelect"
+            name="provider"
+            required
+            class="w-full border border-gray-300 rounded-lg p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+            <option value="" disabled selected>Select a provider</option>
+            <% providers.forEach(provider => { %>
+                <option value="<%= provider._id %>"><%= provider.name %></option>
+            <% }); %>
+        </select>
+
+        <!-- Date Picker -->
+        <div class="mt-4">
+            <label for="datePicker" class="block text-[#252956] font-medium mb-2">
+                Select a Date
+            </label>
+            <input
+                type="text"
+                id="datePicker"
+                name="date"
+                class="w-full border border-gray-300 rounded-lg p-3 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="Pick a date"
+                disabled
+            />
+        </div>
+
+        <!-- Queue Section -->
+    </div>
+    <div class="max-w-2xl mx-auto p-4 rounded-lg mt-8 overflow-y-auto hide-scrollbar">
+        <div id="queueData" class="mt-6 hidden bg-blue-50 p-4 rounded-lg shadow-lg">
+            <h3 class="text-blue-600 font-semibold mb-4">Queue Details</h3>
+            <ul id="queueList" class="space-y-4">
+                <!-- Queue items will be dynamically added here -->
+            </ul>
+            <p id="estimatedWaitTime" class="mt-4 text-blue-600 font-medium"></p>
+        </div>
+    </div>
+</div>
+    <!-- Include Flatpickr JS -->
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        const providerSelect = document.getElementById("providerSelect");
+        const datePicker = document.getElementById("datePicker");
+        let flatpickrInstance;
+
+        providerSelect.addEventListener("change", async () => {
+            const providerId = providerSelect.value;
+            if (!providerId) return;
+
+            // Fetch unavailable days from the server
+            try {
+                const response = await fetch(`/queue/${providerId}`);
+                const unavailableDays = await response.json();
+
+                // Enable the date picker and reinitialize Flatpickr
+                datePicker.disabled = false;
+                if (flatpickrInstance) {
+                    flatpickrInstance.destroy(); // Destroy the previous instance
+                }
+
+                flatpickrInstance = flatpickr(datePicker, {
+                    dateFormat: "Y-m-d",
+                    minDate: "today",
+                    disable: [
+                        function (date) {
+                            return unavailableDays.includes(date.getDay());
+                        }
+                    ]
+                });
+            } catch (error) {
+                console.error("Error fetching unavailable days:", error);
+            }
+        });
+</script>
+        <script>
+    datePicker.addEventListener("change", async function () {
+        const providerId = providerSelect.value;
+        const selectedDate = this.value;
+
+        if (!providerId || !selectedDate) return;
+
+        try {
+            const response = await fetch(`/queue/size/${providerId}/${selectedDate}/page`);
+            const data = await response.json();
+
+            const queueList = document.getElementById("queueList");
+            const estimatedWaitTime = document.getElementById("estimatedWaitTime");
+            const queueDataDiv = document.getElementById("queueData");
+
+            // Clear previous data
+            queueList.innerHTML = "";
+            estimatedWaitTime.textContent = "";
+
+            if (data.queueSize === 0) {
+                queueList.innerHTML = "<li class='text-gray-500'>No bookings for the selected date.</li>";
+            } else {
+                data.queueData.forEach((item, index) => {
+                    let statusColor;
+                    let statusIcon;
+
+                    // Determine status color and icon
+                    switch (item.status) {
+                        case "pending":
+                            statusColor = "text-yellow-500";
+                            statusIcon = `<i class="fas fa-clock"></i>`;
+                            break;
+                        case "In progress":
+                            statusColor = "text-blue-500";
+                            statusIcon = `<i class="fas fa-spinner animate-spin"></i>`;
+                            break;
+                        case "completed":
+                            statusColor = "text-green-500";
+                            statusIcon = `<i class="fas fa-check-circle"></i>`;
+                            break;
+                        default:
+                            statusColor = "text-gray-500";
+                            statusIcon = "";
+                    }
+
+                    queueList.innerHTML += `
+                        <li class="bg-white p-4 rounded-lg shadow-md flex justify-between items-center space-x-4">
+                            <div class="flex-1">
+                                <h4 class="text-gray-800 font-semibold">${item.userName}</h4>
+                                <p class="text-sm text-gray-600">Complexity: ${item.complexity}</p>
+                                <p class="text-sm text-gray-600">Position: ${item.queuePosition} <span class="text-gray-400">(in line)</span></p>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <span class="${statusColor} text-sm flex items-center">${statusIcon} ${item.status}</span>
+                            </div>
+                        </li>
+                    `;
+                });
+
+                estimatedWaitTime.textContent = `Estimated Wait Time: ${data.estimatedWaitTime.toFixed(1)} hours`;
+            }
+
+            queueDataDiv.classList.remove("hidden");
+        } catch (error) {
+            console.error("Error fetching queue data:", error);
+        }
+    });
+</script>
+ 
+    <%- include('./partials/footer'); %>
+</body>
+</html>
