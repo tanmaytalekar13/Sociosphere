@@ -1,51 +1,47 @@
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const { User } = require('../models/user');
-const jwt = require('jsonwebtoken');
-require('dotenv').config();
 
-// Passport Google OAuth configuration
 passport.use(new GoogleStrategy({
-  clientID: process.env.GOOGLE_CLIENT_ID,
-  clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-  callbackURL: "https://sociosphere-qwwg.onrender.com/auth/google/callback"
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: process.env.GOOGLE_CALLBACK_URL,
+    scope: ['profile', 'email']
+  },
+  async (accessToken, refreshToken, profile, done) => {
+    try {
+      // Find existing user
+      const existingUser = await User.findOne({ googleId: profile.id });
+      
+      if (existingUser) {
+        return done(null, existingUser);
+      }
 
-},
-async (accessToken, refreshToken, profile, done) => {
-  try {
-    // Check if the User exists or create a new one
-    let user = await User.findOne({ email: profile.emails[0].value });
-
-    if (!user) {
-      user = new User({
+      // Create new user
+      const newUser = await User.create({
+        googleId: profile.id,
         name: profile.displayName,
         email: profile.emails[0].value,
-        role: 'User', // Set default role
+        profileImage: profile.photos[0].value,
+        isGoogleUser: true
       });
-      await user.save();
+
+      done(null, newUser);
+    } catch (error) {
+      done(error, null);
     }
-
-    // Generate a JWT token for the user
-    const token = jwt.sign(
-      { email: user.email, id: user._id, user: true }, 
-      process.env.JWT_KEY,
-      { expiresIn: '1h' } // Optional: Set token expiration
-    );
-
-    // Return user info and token
-    done(null, user, { token });
-  } catch (error) {
-    done(error, false);
   }
-}));
+));
 
-// Serialize user for session management
 passport.serializeUser((user, done) => {
-  done(null, user.id); // Using `user.id` for the session
+  done(null, user.id);
 });
 
-// Deserialize user from session
 passport.deserializeUser(async (id, done) => {
-  const user = await User.findById(id);
-  done(null, user);
+  try {
+    const user = await User.findById(id);
+    done(null, user);
+  } catch (error) {
+    done(error, null);
+  }
 });
