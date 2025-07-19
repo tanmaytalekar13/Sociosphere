@@ -619,24 +619,25 @@ router.post("/book/schedule/:providerid/:userId", authenticateJWT, async (req, r
     // Save the booking request to the database
     await bookingRequest.save();
 
-    const bookingDetails = `Booking ID: ${bookingRequest._id}, Provider: ${provider.name}, Date: ${bookingDate.toDateString()}}`;
+   const bookingDetails = `Booking ID: ${bookingRequest._id}, Provider: ${provider.name}, Date: ${bookingDate.toDateString()}`;
 
-    // Call SMS endpoint
     await axios.post('https://sociosphere-qwwg.onrender.com/booking/book-success', {
-      phoneNumber: '91'+userContact,
+      phoneNumber: '91' + userContact,
       bookingDetails: bookingDetails
-    })
+    });
+
     // Redirect to the Thank You page with bookingId
     return res.redirect(`/ThankYou/${bookingRequest._id}`);
   } catch (error) {
-    res.send(404, error)
+  console.error("Booking error:", error);
 
-    // Ensure a response is sent only once
-    if (!res.headersSent) {
-      return res.status(500).send("Error creating booking");
-    }
+  if (!res.headersSent) {
+    return res.status(500).send("Error creating booking: " + error.message);
   }
+}
+
 });
+
 router.get("/register", async (req, res) => {
   res.render("userRegistration");
 });
