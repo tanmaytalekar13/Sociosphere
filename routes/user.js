@@ -571,6 +571,7 @@ router.post("/book/instant/:providerid/:userId", authenticateJWT, async (req, re
     return res.status(500).send("Error creating booking");
   }
 });
+
 router.post("/book/schedule/:providerid/:userId", authenticateJWT, async (req, res) => {
   const { userContact, complexity, totalAmount, useraddress, date, transactionId } = req.body;
 
@@ -590,6 +591,9 @@ router.post("/book/schedule/:providerid/:userId", authenticateJWT, async (req, r
 
     // Validate the date
     const bookingDate = new Date(date);
+    if (isNaN(bookingDate.getTime())) {
+      return res.status(400).send("Invalid booking date");
+    }
 
     // Get the queue size for the provider on the selected date
     const queueCount = await BookingRequest.countDocuments({
@@ -604,39 +608,42 @@ router.post("/book/schedule/:providerid/:userId", authenticateJWT, async (req, r
       provider: req.params.providerid,
       category: provider.category,
       contactNumber: userContact,
-      date: bookingDate, // Save the date part
-      time: new Date(), // Save current timestamp
+      date: bookingDate,
+      time: new Date(), // current time
       address: useraddress,
       complexity,
       totalAmount,
-      queueEnteredAt: new Date(), // Timestamp for sorting in the queue
-      queuePosition: queueCount + 1, // Position based on queue size
-      paymentDetails: {
-        transactionId,
-      },
+      queueEnteredAt: new Date(),
+      queuePosition: queueCount + 1,
+      paymentDetails: { transactionId },
     });
 
     // Save the booking request to the database
     await bookingRequest.save();
 
-   const bookingDetails = `Booking ID: ${bookingRequest._id}, Provider: ${provider.name}, Date: ${bookingDate.toDateString()}`;
+    const bookingDetails = `Booking ID: ${bookingRequest._id}, Provider: ${provider.name}, Date: ${bookingDate.toDateString()}`;
 
-    await axios.post('https://sociosphere-qwwg.onrender.com/booking/book-success', {
-      phoneNumber: '91' + userContact,
-      bookingDetails: bookingDetails
-    });
+    // Send SMS (with try/catch)
+    try {
+      await axios.post('https://sociosphere-qwwg.onrender.com/booking/book-success', {
+        phoneNumber: '91' + userContact,
+        bookingDetails: bookingDetails
+      });
+    } catch (smsError) {
+      console.error("Error sending SMS:", smsError.response?.data || smsError.message);
+    }
 
     // Redirect to the Thank You page with bookingId
     return res.redirect(`/ThankYou/${bookingRequest._id}`);
   } catch (error) {
-  console.error("Booking error:", error);
+    console.error("Booking error:", error.stack || error);
 
-  if (!res.headersSent) {
-    return res.status(500).send("Error creating booking: " + error.message);
+    if (!res.headersSent) {
+      return res.status(500).send("Error creating booking: " + error.message);
+    }
   }
-}
-
 });
+
 
 router.get("/register", async (req, res) => {
   res.render("userRegistration");
