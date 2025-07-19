@@ -154,23 +154,20 @@ router.post("/book-success", async (req, res) => {
     return res.status(400).send("Missing required fields");
   }
 
+  const to = phoneNumber.startsWith('+') ? phoneNumber : '+91' + phoneNumber;
+  const from = '+13613147028';
   const message = `Your booking is confirmed! Details: ${bookingDetails}`;
 
   try {
-    // Ensure Twilio client is initialized correctly
-    await twilioClient.messages.create({
-      body: message,
-      from: "13613147028", // Twilio phone number
-      to: phoneNumber,     // User's phone number
-    });
-
-    console.log("SMS sent successfully");
+    const sms = await twilioClient.messages.create({ body: message, from, to });
+    console.log("SMS sent successfully, SID:", sms.sid);
     return res.status(200).send("SMS sent successfully");
   } catch (error) {
-    console.error("Error sending SMS:", error.message || error);
+    console.error("Twilio error:", error); // full object
     return res.status(500).send("Failed to send SMS");
   }
 });
+
 
 
 
